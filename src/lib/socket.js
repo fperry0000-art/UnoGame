@@ -1,6 +1,8 @@
 import { io } from "socket.io-client";
 
 export const socket = io("https://unogame.up.railway.app", {
-  transports: ["polling", "websocket"], // 👈 polling FIRST
+  transports: ["websocket"], // 👈 ONLY websocket
   reconnection: true,
 });
+
+
