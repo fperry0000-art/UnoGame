@@ -1,7 +1,6 @@
 {
   "build": {
     "builder": "RAILPACK",
-    "rootDirectory": "uno-frontend",
     "buildCommand": "npm run build"
   },
   "deploy": {
