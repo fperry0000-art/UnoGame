@@ -1,0 +1,10 @@
+{
+  "build": {
+    "builder": "RAILPACK",
+    "buildCommand": ""
+  },
+  "deploy": {
+    "startCommand": "npm start",
+    "healthcheckPath": "/"
+  }
+}
