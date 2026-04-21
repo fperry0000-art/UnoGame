@@ -1,6 +1,7 @@
 {
   "build": {
-    "builder": "NIXPACKS",
+    "builder": "RAILPACK",
+    "rootDirectory": "uno-frontend",
     "buildCommand": "npm run build"
   },
   "deploy": {
