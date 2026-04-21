@@ -858,6 +858,6 @@ io.on("connection", (socket) => {
 
 const PORT = process.env.PORT || 4001;
 
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`UNO server running on port ${PORT}`);
 });
