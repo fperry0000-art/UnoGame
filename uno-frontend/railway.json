@@ -1,11 +1,9 @@
 {
   "build": {
-    "builder": "RAILPACK",
-    "rootDirectory": "uno-frontend",
-    "buildCommand": "npm run build"
+    "builder": "DOCKERFILE",
+    "dockerfilePath": "Dockerfile"
   },
   "deploy": {
-    "startCommand": "npm run start",
     "healthcheckPath": "/"
   }
 }
