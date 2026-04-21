@@ -160,6 +160,7 @@ export default function App() {
   const [game, setGame] = useState(null);
   const [socketId, setSocketId] = useState("");
   const [isConnected, setIsConnected] = useState(socket.connected);
+  const [connectionMessage, setConnectionMessage] = useState("");
   const [pendingWildCard, setPendingWildCard] = useState(null);
   const [scoringEnabled, setScoringEnabled] = useState(true);
   const [targetScore, setTargetScore] = useState(200);
@@ -171,10 +172,17 @@ export default function App() {
     function handleConnect() {
       setSocketId(socket.id);
       setIsConnected(true);
+      setConnectionMessage("");
     }
 
-    function handleDisconnect() {
+    function handleDisconnect(reason) {
       setIsConnected(false);
+      setConnectionMessage(reason ? `Connection lost: ${reason}` : "Connection lost");
+    }
+
+    function handleConnectError(error) {
+      setIsConnected(false);
+      setConnectionMessage(error?.message || "Unable to connect to server");
     }
 
     function handleJoined(data) {
@@ -207,6 +215,7 @@ export default function App() {
 
     socket.on("connect", handleConnect);
     socket.on("disconnect", handleDisconnect);
+    socket.on("connect_error", handleConnectError);
     socket.on("room_joined", handleJoined);
     socket.on("room_update", handleRoomUpdate);
     socket.on("game_state", handleGameState);
@@ -221,6 +230,7 @@ export default function App() {
       clearTimeout(unoTimer);
       socket.off("connect", handleConnect);
       socket.off("disconnect", handleDisconnect);
+      socket.off("connect_error", handleConnectError);
       socket.off("room_joined", handleJoined);
       socket.off("room_update", handleRoomUpdate);
       socket.off("game_state", handleGameState);
@@ -391,7 +401,8 @@ export default function App() {
         <h1>UNO Game v4</h1>
 
         <div style={{ marginBottom: 12 }}>
-          <strong>Status:</strong> {isConnected ? "Connected" : "Not connected"}
+          <strong>Status:</strong>{" "}
+          {isConnected ? "Connected" : connectionMessage || "Not connected"}
         </div>
 
         <div style={{ marginBottom: 12 }}>
@@ -441,7 +452,8 @@ export default function App() {
 
         <h1>UNO Game v4</h1>
         <div style={{ marginBottom: 12 }}>
-          <strong>Status:</strong> {isConnected ? "Connected" : "Not connected"}
+          <strong>Status:</strong>{" "}
+          {isConnected ? "Connected" : connectionMessage || "Not connected"}
         </div>
         <h2>Room: {joinedRoom}</h2>
 
@@ -537,7 +549,8 @@ export default function App() {
       <h1>UNO Game v4</h1>
 
       <div style={{ marginBottom: 10 }}>
-        <strong>Status:</strong> {isConnected ? "Connected" : "Not connected"}
+        <strong>Status:</strong>{" "}
+        {isConnected ? "Connected" : connectionMessage || "Not connected"}
       </div>
 
       <div style={{ marginBottom: 10 }}>

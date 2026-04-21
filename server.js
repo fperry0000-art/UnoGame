@@ -3,6 +3,9 @@ import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
 
+const SOCKET_PING_INTERVAL_MS = Number(process.env.SOCKET_PING_INTERVAL_MS) || 25000;
+const SOCKET_PING_TIMEOUT_MS = Number(process.env.SOCKET_PING_TIMEOUT_MS) || 60000;
+
 const app = express();
 app.use(cors());
 
@@ -17,6 +20,9 @@ const io = new Server(server, {
     origin: "*",
     methods: ["GET", "POST"],
   },
+  transports: ["polling", "websocket"],
+  pingInterval: SOCKET_PING_INTERVAL_MS,
+  pingTimeout: SOCKET_PING_TIMEOUT_MS,
 });
 
 const rooms = {};
@@ -485,6 +491,14 @@ function removePlayerFromRooms(socketId) {
 io.on("connection", (socket) => {
   console.log("Connected:", socket.id);
 
+  socket.conn.on("upgrade", () => {
+    console.log("Transport upgraded:", socket.id, socket.conn.transport.name);
+  });
+
+  socket.conn.on("error", (error) => {
+    console.error("Socket transport error:", socket.id, error?.message || error);
+  });
+
   socket.on("create_room", ({ name }) => {
     const cleanName = String(name || "").trim();
     if (!cleanName) {
@@ -850,8 +864,8 @@ io.on("connection", (socket) => {
     emitRoom(cleanCode);
   });
 
-  socket.on("disconnect", () => {
-    console.log("Disconnected:", socket.id);
+  socket.on("disconnect", (reason) => {
+    console.log("Disconnected:", socket.id, reason);
     removePlayerFromRooms(socket.id);
   });
 });

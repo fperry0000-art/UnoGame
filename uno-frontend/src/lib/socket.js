@@ -5,15 +5,19 @@ import { io } from "socket.io-client";
 const serverUrl = import.meta.env.VITE_SERVER_URL ||
   (import.meta.env.DEV
     ? `${window.location.protocol}//${window.location.hostname}:4001`
-    : undefined);
+    : "https://unogame.up.railway.app");
 
 if (!serverUrl) {
   console.error("VITE_SERVER_URL environment variable is required in production");
 }
 
 export const socket = io(serverUrl, {
-  transports: ["websocket"],
+  transports: ["polling", "websocket"],
+  upgrade: true,
+  timeout: 20000,
   reconnection: true,
+  reconnectionDelay: 1000,
+  reconnectionDelayMax: 5000,
 });
 
 
